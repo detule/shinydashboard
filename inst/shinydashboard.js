@@ -52,18 +52,17 @@ $(function() {
   // sendMessage to sidebar when we programmatically disable it
   // (this ensure that the sidebar has the correct value)
   var updateSidebarVal = function(newVal) {
-    var $obj = $('.shiny-bound-input#main-sidebar-id');
+    var $obj = $('.shiny-bound-input#appSidebar');
     var inputBinding = $obj.data('shiny-input-binding');
-    alert($obj.attr('data-value'));
     if (!newVal) inputBinding.toggleValue($obj);
     else inputBinding.setValue($obj, newVal);
-    alert($obj.attr('data-value'));
+    $obj.trigger('change');
+
   };
 
   // Optionally disable sidebar
   if ($("section.sidebar").data("disable")) {
     $("body").addClass("sidebar-collapse");
-    updateSidebarVal("collapsed");
     $(".navbar > .sidebar-toggle").hide();
   }
 
@@ -73,6 +72,8 @@ $(function() {
     $(window).trigger("resize");
     updateSidebarVal();
   });
+
+
 
   // menuOutputBinding
   // ------------------------------------------------------------------
@@ -173,17 +174,13 @@ $(function() {
   var sidebarInputBinding = new Shiny.InputBinding();
   $.extend(sidebarInputBinding, {
     find: function(scope) {
-      return $(scope).find('#main-sidebar-id');
+      return $(scope).find('#appSidebar');
     },
     getValue: function(el) {
       return $(el).attr("data-value");
-      // if ($('body').hasClass('sidebar-collapse')) return 'collapsed';
-      // else return 'expanded';
     },
     setValue: function(el, value) {
       $(el).attr("data-value", value);
-      // if (value === 'collapsed') $('body').addClass('sidebar-collapse');
-      // else  $('body').removeClass('sidebar-collapse');
     },
     toggleValue: function(el) {
       var current = this.getValue(el);
