@@ -122,6 +122,9 @@ dashboardSidebar <- function(..., disable = FALSE, width = NULL, miniWidth = NUL
       .sidebar-mini.sidebar-collapse .main-header .navbar {
         margin-left: _WIDTH_;
       }
+      .sidebar-mini.sidebar-collapse .content-wrapper {
+        margin-left: _WIDTH_ !important;
+      }
       .sidebar-mini.sidebar-collapse .main-header .logo {
         width: _WIDTH_;
       }
