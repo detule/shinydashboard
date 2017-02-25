@@ -59,13 +59,16 @@ dashboardPage <- function(header, sidebar, body, title = NULL,
 
   # if the sidebar has the class "start-collapsed", it means that the user set
   # the `collapsed` argument of `dashboardSidebar` to TRUE
-  collapsed <- "start-collapsed" %in% strsplit(sidebar$attribs$class, " ")[[1]]
+  collapsed <- "shinydashboard-collapsed" %in% strsplit(sidebar$attribs$class, " ")[[1]]
+  mini <- "shinydashboard-mini-sidebar" %in% strsplit(sidebar$attribs$class, " ")[[1]]
 
   addDeps(
     tags$body(
       # the "sidebar-collapse" class on the body means that the sidebar should
       # the collapsed (AdminLTE code)
-      class = paste0("skin-", skin, if (collapsed) " sidebar-collapse"),
+      class = paste0("skin-", skin
+        ,if (collapsed) " sidebar-collapse"
+        ,if (mini) " sidebar-mini"),
       style = "min-height: 611px;",
       shiny::bootstrapPage(content, title = title)
     )

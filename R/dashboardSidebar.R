@@ -60,7 +60,7 @@
 #' )
 #' }
 #' @export
-dashboardSidebar <- function(..., disable = FALSE, width = NULL, collapsed = FALSE) {
+dashboardSidebar <- function(..., disable = FALSE, width = NULL, miniWidth = NULL, collapsed = FALSE, mini = FALSE) {
   width <- validateCssUnit(width)
 
   # Set up custom CSS for custom width
@@ -82,6 +82,14 @@ dashboardSidebar <- function(..., disable = FALSE, width = NULL, collapsed = FAL
         .left-side {
           width: _WIDTH_;
         }
+
+        .sidebar-collapse .main-sidebar,
+        .sidebar-collapse .left-side {
+          -webkit-transform: translate(-_WIDTH_, 0);
+          -ms-transform: translate(-_WIDTH_, 0);
+          -o-transform: translate(-_WIDTH_, 0);
+          transform: translate(-_WIDTH_, 0);
+        }
       }
       @media (max-width: 767px) {
         .sidebar-open .content-wrapper,
@@ -92,8 +100,7 @@ dashboardSidebar <- function(..., disable = FALSE, width = NULL, collapsed = FAL
           -o-transform: translate(_WIDTH_, 0);
           transform: translate(_WIDTH_, 0);
         }
-      }
-      @media (max-width: 767px) {
+
         .main-sidebar,
         .left-side {
           -webkit-transform: translate(-_WIDTH_, 0);
@@ -102,14 +109,24 @@ dashboardSidebar <- function(..., disable = FALSE, width = NULL, collapsed = FAL
           transform: translate(-_WIDTH_, 0);
         }
       }
-      @media (min-width: 768px) {
-        .sidebar-collapse .main-sidebar,
-        .sidebar-collapse .left-side {
-          -webkit-transform: translate(-_WIDTH_, 0);
-          -ms-transform: translate(-_WIDTH_, 0);
-          -o-transform: translate(-_WIDTH_, 0);
-          transform: translate(-_WIDTH_, 0);
-        }
+    '))))
+  }
+  custom_mini_css <- NULL
+  if (!is.null(miniWidth)) {
+    # This CSS is derived from the sidebar-related instances of '230px' (the
+    # default sidebar width) from inst/AdminLTE/AdminLTE.css. One difference is
+    # that instead making changes to the global settings, we've put them in a
+    # media query (min-width: 768px), so that it won't override other media
+    # queries (like max-width: 767px) that work for narrower screens.
+    custom_mini_css <- tags$head(tags$style(HTML(gsub("_WIDTH_", miniWidth, fixed = TRUE, '
+      .sidebar-mini.sidebar-collapse .main-header .navbar {
+        margin-left: _WIDTH_;
+      }
+      .sidebar-mini.sidebar-collapse .main-header .logo {
+        width: _WIDTH_;
+      }
+      .sidebar-mini.sidebar-collapse .main-sidebar {
+        width: _WIDTH_ !important;
       }
     '))))
   }
@@ -118,8 +135,11 @@ dashboardSidebar <- function(..., disable = FALSE, width = NULL, collapsed = FAL
   # class to the body (not to the sidebar). However, it makes sense for the
   # `collapsed` argument to belong in this function. So this information is
   # just passed through (also as a class) to the `dashboardPage()` function
-  tags$aside(class = paste("main-sidebar", if (collapsed) "start-collapsed"),
+  tags$aside(class = paste("main-sidebar"
+          ,if (collapsed) "shinydashboard-collapsed"
+          ,if (mini) "shinydashboard-mini-sidebar"),
     custom_css,
+    custom_mini_css,
     tags$section(
       class = "sidebar",
       `data-disable` = if (disable) 1 else NULL,
